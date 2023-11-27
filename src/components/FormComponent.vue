@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogOpen" width="720" @click:outside="closeFormDialog">
+    <v-dialog v-model="dialogOpen" width="960" @click:outside="closeFormDialog">
         <v-card>
             <v-card-title>
                 <span class="text-h5">{{ selectedRecipeData.recipe_name }}</span>
@@ -8,15 +8,26 @@
                 <v-container>
                     <v-row>
                         <v-col cols="12" >
-                            <form>
-                                <v-text-field v-model="state.name"  :counter="10" label="Name" required ></v-text-field>
-                                <v-text-field v-model="state.email"  label="E-mail" required ></v-text-field>
-                                <v-select v-model="state.select" :items="items"  label="Item" required ></v-select>
-                                <v-checkbox v-model="state.checkbox" label="Do you agree?" required ></v-checkbox>
-                                <v-btn class="me-4" >
-                                    submit
-                                </v-btn>
-                            </form>
+                            <v-form @submit.prevent="submitForm">
+                                <v-row>
+                                    <v-col cols="12" class="py-0">
+                                        <v-text-field v-model="form.nama" label="Nama"></v-text-field>
+                                        <v-textarea v-model="form.description" label="Description Resep"></v-textarea>
+                                        <v-row v-for="(step, index) in form.steps" :key="index" >
+                                            <v-col md="4" class="py-0">
+                                                <v-text-field v-model="step.step_name" :label="'Nama Step ' + (index + 1)"></v-text-field>
+                                            </v-col>
+                                            <v-col md="4" class="py-0" >
+                                                <v-text-field v-model="step.step_desc" :label="'Deskripsi Step ' + (index + 1)"></v-text-field>
+                                            </v-col>
+                                            <v-col md="4" class="py-0" >
+                                                <v-text-field v-model="step.step_photo" :label="'Photo Step ' + (index + 1)" append-icon="mdi-delete" @click:append="removeStep(index)"></v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                        <v-btn block @click="addStep" color="primary" class="mt-2 py-5">Tambah Step</v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-form>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -30,13 +41,7 @@
                 >
                     Close
                 </v-btn>
-                <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeFormDialog"
-                >
-                    Save
-                </v-btn>
+                <v-btn type="submit" color="success">Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -44,7 +49,6 @@
 
 <script setup>
     import { ref, defineProps, onMounted, defineEmits  } from 'vue';
-    import { reactive } from 'vue'
 
     const props = defineProps(['data']);
     const emit = defineEmits();
@@ -61,24 +65,24 @@
         emit('closeFormDialog');
     };
 
-  
+    const form = ref({
+        nama: '',
+        description: '',
+        steps: [{ step_name: '', step_desc: '', step_photo: '' }]
+    });
 
-  const initialState = {
-    name: '',
-    email: '',
-    select: null,
-    checkbox: null,
-  }
+    const addStep = () => {
+        console.log(form.value.steps)
+        form.value.steps.push({ step_name: '', step_desc: '', step_photo: '' });
+    };
 
-  const state = reactive({
-    ...initialState,
-  })
+    const removeStep = (index) => {
+        console.log(form.value.steps)
+        form.value.steps.splice(index, 1);
+    };
 
-  const items = [
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-  ]
-  
+    const submitForm = () => {
+        console.log(form);
+    };
+
 </script>

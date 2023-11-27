@@ -1,6 +1,12 @@
 <template>
     <v-row>
-        <v-col v-for="item in datas" :key="item.id" xl="3" md="3" sm="6">
+        <v-col class="d-flex align-self-stretch" xl="3" md="3" sm="6" >
+            <v-card @click="openFormDialog" class="blur-card mx-auto my-12" > 
+                <v-icon size="64" class="grey--text">mdi-plus</v-icon>
+                <v-card-subtitle class="mt-4">Add New Recipe</v-card-subtitle>
+            </v-card>
+        </v-col>
+        <v-col v-for="item in datas" :key="item.id" xl="3" md="3" sm="6" class="d-flex align-self-stretch">
             <v-card :loading="loading" class="mx-auto my-12">
                 <template v-slot:loader="{isActive}">
                     <v-progress-linear :active="isActive" color="deep-purple" height="4" indeterminate>
@@ -19,7 +25,7 @@
                     {{ item.recipe_desc }}
                 </v-card-text>
                 <v-divider class="mx-4 mb-1"></v-divider>
-                <v-card-actions>
+                <v-card-actions class="mt-auto">
                     <v-btn color="deep-purple" variant="text" @click="openDialog(item)">See Recipe</v-btn>
                     <v-btn color="dark" variant="text" @click="openFormDialog(item)">Open Form</v-btn>
                 </v-card-actions>
@@ -44,7 +50,7 @@
             "id":"1",
             "recipe_name" : "Mie Goreng",
             "recipe_image": "https://cdn0-production-images-kly.akamaized.net/Sor9t0j3HCLpYUYzBy5PYdZ68u0=/469x625/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4101378/original/077840000_1658820480-ikhsan-baihaqi-pbc2wXbQYpI-unsplash.jpg",
-            "recipe_desc" : "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Esse incidunt laborum aperiam natus autem odio ducimus, provident nihil dolorum eos, modi voluptate ipsa corrupti sed quibusdam assumenda ad, molestias iure?",
+            "recipe_desc" : "modi voluptate ipsa corrupti sed quibusdam assumenda ad, molestias iure?",
             "steps":[
                 {
                     "step_id": "1_1",
@@ -272,3 +278,18 @@
         isFormDialogOpen.value = false;
     };
 </script>
+
+<style scoped>
+.blur-card {
+    background: rgb(34,193,195);
+    background: linear-gradient(45deg, rgb(255, 255, 255) 0%, rgb(255, 174, 0) 100%);
+    backdrop-filter: blur(5px); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    width: 100%;
+    cursor: pointer;
+}
+</style>

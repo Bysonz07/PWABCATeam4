@@ -2,7 +2,7 @@
 
 <!-- ![ResepVue Logo](LINK LOGO) -->
 
-Aplikasi ResepVue adalah aplikasi manajemen resep yang dibangun menggunakan Vue.js. Aplikasi ini memiliki fitur CRUD (Create, Read, Update, Delete), integrasi kamera untuk menambahkan foto resep, service worker untuk dukungan offline, indexed DB untuk menyimpan data lokal, dan geolocation untuk menemukan resep berdasarkan lokasi pengguna.
+Aplikasi ResepVue adalah aplikasi manajemen resep yang dibangun menggunakan Vue.js. Aplikasi ini memiliki fitur CRUD (Create, Read, Update, Delete), integrasi kamera untuk menambahkan foto resep, service worker untuk dukungan offline, indexed DB untuk menyimpan data lokal.
 
 ## Fitur Utama
 
@@ -10,11 +10,11 @@ Aplikasi ResepVue adalah aplikasi manajemen resep yang dibangun menggunakan Vue.
 - **Integrasi Kamera:** Tambahkan foto resep langsung dari kamera perangkat.
 - **Service Worker:** Akses aplikasi secara offline dan dapatkan pengalaman pengguna yang lancar.
 - **Indexed DB:** Simpan resep secara lokal untuk akses cepat dan tanpa koneksi internet.
-- **Geolocation:** Gambar step resep menggunakan lokasi pengguna.
+<!-- - **Geolocation:** Gambar step resep menggunakan lokasi pengguna. -->
 
 ## Instalasi
 
-1. Clone repositori ini: `git clone https://github.com/username/resepvue.git`
+1. Clone repositori ini: `git clone https://github.com/Bysonz07/PWABCATeam4.git`
 2. Masuk ke direktori proyek: `cd resepvue`
 3. Instal dependencies: `npm install`
 4. Instal PNPM : `npm install -g pnpm`
