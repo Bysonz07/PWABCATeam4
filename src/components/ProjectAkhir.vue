@@ -20,19 +20,24 @@
                 </v-card-text>
                 <v-divider class="mx-4 mb-1"></v-divider>
                 <v-card-actions>
-                    <v-btn block color="deep-purple" variant="text" @click="openDialog(item)">See Recipe</v-btn>
+                    <v-btn color="deep-purple" variant="text" @click="openDialog(item)">See Recipe</v-btn>
+                    <v-btn color="dark" variant="text" @click="openFormDialog(item)">Open Form</v-btn>
                 </v-card-actions>
             </v-card>
         </v-col>
 
         <!-- Dialog -->
-        <DetailModal :data="selectedRecipeData" v-if="isDialogOpen"  @closeDialog="closeDialog" />
+        <DetailModal :data="selectedRecipeData" v-if="isDetailDialogOpen"  @closeDialog="closeDialog" />
+
+        <!-- Form Dialog -->
+        <FormComponent :data="selectedRecipeData" v-if="isFormDialogOpen"  @closeFormDialog="closeFormDialog" />
     </v-row>
 </template>
 
 <script setup>
     import { ref } from 'vue';
     import DetailModal from './DetailModal.vue';
+    import FormComponent from './FormComponent.vue';
     const datas = ref(
     [
         {
@@ -246,14 +251,24 @@
     ])
     const loading = ref(false)
     const selectedRecipeData = ref();
-    const isDialogOpen = ref(false);
+    const isDetailDialogOpen = ref(false);
+    const isFormDialogOpen = ref(false);
 
     const openDialog = (item) => {
         selectedRecipeData.value = item;
-        isDialogOpen.value = true;
+        isDetailDialogOpen.value = true;
+    };
+
+    const openFormDialog = (item) => {
+        selectedRecipeData.value = item;
+        isFormDialogOpen.value = true;
     };
 
     const closeDialog = () => {
-        isDialogOpen.value = false;
+        isDetailDialogOpen.value = false;
+    };
+
+    const closeFormDialog = () => {
+        isFormDialogOpen.value = false;
     };
 </script>
