@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogOpen" width="1024" @click:outside="closeDialog">
+    <v-dialog v-model="dialogOpen" width="720" @click:outside="closeDialog">
         <v-card>
             <v-card-title>
                 <span class="text-h5">{{ selectedRecipeData.recipe_name }}</span>
