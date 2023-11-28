@@ -7,19 +7,17 @@ export default defineConfig({
     vue(),
     VitePWA({
       injectRegister:'auto',
-      // strategies:'generateSW',
       strategies:'injectManifest',
-      srcDir:'src',
+      srcDir:'src/config',
       filename:'sw.js',
-      // registerType: 'autoUpdate',
       registerType:'prompt',
       devOptions: {
         enabled: true
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'My Awesome App - Yulius',
-        short_name: 'MyApp',
+        name: 'Recipe Rush',
+        short_name: 'Receipe',
         description: 'My Awesome App description - Yulius',
         theme_color: '#ffffff',
 				icons: [

@@ -6,10 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-pwa-assets": "pwa-assets-generator",
+    "serve": "cd dist && http-server & cd.."
   },
   "dependencies": {
     "@mdi/font": "^7.3.67",
+    "@vite-pwa/assets-generator": "^0.0.11",
+    "axios": "^1.6.2",
     "mongodb": "^6.3.0",
     "pnpm": "^8.11.0",
     "vite-plugin-pwa": "^0.17.0",

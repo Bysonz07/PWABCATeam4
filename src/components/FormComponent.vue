@@ -12,8 +12,29 @@
                             <v-form @submit.prevent="submitForm">
                                 <v-row>
                                     <v-col cols="12" class="py-0">
-                                        <v-text-field v-model="form.recipe_name" label="Nama"></v-text-field>
-                                        <v-textarea v-model="form.recipe_desc" label="Description Resep"></v-textarea>
+                                        <v-text-field v-model="form.recipe_name" label="Nama Resep"></v-text-field>
+                                        <v-textarea v-model="form.recipe_desc" label="Deskripsi Resep"></v-textarea>
+                                        <input type="file" id="fileInput" hidden @change="onCreateUploadFile" />
+                                        <v-menu>
+                                            <template v-slot:activator="{ props }">
+                                                <v-text-field 
+                                                    v-model="fileImage" 
+                                                    placeholder="Foto Masakan" 
+                                                    readonly
+                                                    v-bind="props" 
+                                                    clearable
+                                                    @click:clear="onRemoveFile"
+                                                />
+                                            </template>
+                                            <v-list>
+                                                <v-list-item value="file" @click="onChooseFile">
+                                                    <v-list-item-title>Choose File</v-list-item-title>
+                                                </v-list-item>
+                                                <v-list-item value="camera">
+                                                    <v-list-item-title>Take Picture</v-list-item-title>
+                                                </v-list-item>
+                                            </v-list>
+                                        </v-menu>
                                         <v-row v-for="(step, index) in form.steps" :key="index" >
                                             <v-col md="4" class="py-0">
                                                 <v-text-field v-model="step.step_name" :label="'Nama Step ' + (index + 1)" ></v-text-field>
@@ -46,10 +67,10 @@
 
 <script setup>
     import { ref, defineProps, onMounted, defineEmits  } from 'vue';
-
+    import axios from 'axios'
     const props = defineProps(['data']);
     const emit = defineEmits();
-
+    const fileImage = ref("")
     const dialogOpen = ref(false);
     const selectedRecipeData = ref(null);
 
@@ -90,9 +111,43 @@
         if(selectedRecipeData.value != null){
             console.log("update " + selectedRecipeData.value.recipe_name)
         } else {
-            console.log("add")
+            axios({
+                baseURL: "http://localhost:3002/v1.0/cooking-mama/receipt/create-receipe",
+                method: "POST",
+                data: {
+                    name: form.value.recipe_name,
+                    description: form.value.recipe_desc,
+                    image: form.value.recipe_image
+                }
+            })
+            .then(res => {
+                console.log({ res })
+            }) 
+            .catch((err) => {
+                console.log({ err })
+            })
         }
         console.log(form);
     };
+
+    const onChooseFile = () => {
+        const element = document.getElementById("fileInput")
+        element.click()
+    }
+
+    const onCreateUploadFile = (event) => {
+        const file = event.target.files[0];
+        console.log({ file })
+        fileImage.value = file.name;
+        const formData = new FormData();
+        formData.append('file', file);
+
+        form.value.recipe_image = formData;
+    }
+
+    const onRemoveFile = () => {
+        fileImage.value = "";
+        form.value.recipe_image = ''
+    }
 
 </script>
