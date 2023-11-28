@@ -1,7 +1,7 @@
 <template>
     <v-row>
         <v-col class="d-flex align-self-stretch" xl="3" md="3" sm="6" >
-            <v-card @click="openFormDialog" class="blur-card mx-auto my-12" > 
+            <v-card @click="openFormDialog(null)" class="blur-card mx-auto my-12" > 
                 <v-icon size="64" class="grey--text">mdi-plus</v-icon>
                 <v-card-subtitle class="mt-4">Add New Recipe</v-card-subtitle>
             </v-card>
