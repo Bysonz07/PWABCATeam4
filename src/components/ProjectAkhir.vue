@@ -7,13 +7,14 @@
             </v-card>
         </v-col>
         <v-col v-for="item in datas" :key="item.id" xl="3" md="3" sm="6" class="d-flex align-self-stretch">
-            <v-card :loading="loading" class="mx-auto my-12">
-                <template v-slot:loader="{isActive}">
-                    <v-progress-linear :active="isActive" color="deep-purple" height="4" indeterminate>
-                        
-                    </v-progress-linear>
-                </template>
-                <v-img cover height="250" :src="item.recipe_image"></v-img>
+            <v-card class="mx-auto my-12 cards">
+                <v-btn class="edit-button" icon @click="openFormDialog(item)">
+                    <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn class="delete-button" icon @click="openDeleteDialog(item)">
+                    <v-icon>mdi-trash-can</v-icon>
+                </v-btn>
+                <v-img cover max-height="250" height="250" :src="item.recipe_image"></v-img>
                 <v-card-item>
                     <v-card-title>{{ item.recipe_name }}</v-card-title>
                     <v-card-subtitle>
@@ -21,13 +22,14 @@
                         <v-icon color="error" icon="mdi-fire-circle" size="small"></v-icon>
                     </v-card-subtitle>
                 </v-card-item>
-                <v-card-text>
+
+                <v-card-text >
                     {{ item.recipe_desc }}
                 </v-card-text>
+                
                 <v-divider class="mx-4 mb-1"></v-divider>
-                <v-card-actions class="mt-auto">
+                <v-card-actions class="justify-center">
                     <v-btn color="deep-purple" variant="text" @click="openDialog(item)">See Recipe</v-btn>
-                    <v-btn color="dark" variant="text" @click="openFormDialog(item)">Open Form</v-btn>
                 </v-card-actions>
             </v-card>
         </v-col>
@@ -37,6 +39,9 @@
 
         <!-- Form Dialog -->
         <FormComponent :data="selectedRecipeData" v-if="isFormDialogOpen"  @closeFormDialog="closeFormDialog" />
+
+        <!-- Delete Dialog -->
+        <DeleteModal :data="selectedRecipeData" v-if="isDeleteDialogOpen"  @closeDeleteDialog="closeDeleteDialog" />
     </v-row>
 </template>
 
@@ -44,6 +49,7 @@
     import { ref } from 'vue';
     import DetailModal from './DetailModal.vue';
     import FormComponent from './FormComponent.vue';
+    import DeleteModal from './DeleteModal.vue';
     const datas = ref(
     [
         {
@@ -255,10 +261,10 @@
             ]
         }
     ])
-    const loading = ref(false)
     const selectedRecipeData = ref();
     const isDetailDialogOpen = ref(false);
     const isFormDialogOpen = ref(false);
+    const isDeleteDialogOpen = ref(false);
 
     const openDialog = (item) => {
         selectedRecipeData.value = item;
@@ -270,12 +276,21 @@
         isFormDialogOpen.value = true;
     };
 
+    const openDeleteDialog = (item) => {
+        selectedRecipeData.value = item;
+        isDeleteDialogOpen.value = true;
+    };
+
     const closeDialog = () => {
         isDetailDialogOpen.value = false;
     };
 
     const closeFormDialog = () => {
         isFormDialogOpen.value = false;
+    };
+
+    const closeDeleteDialog = () => {
+        isDeleteDialogOpen.value = false;
     };
 </script>
 
@@ -291,5 +306,42 @@
     align-self: stretch;
     width: 100%;
     cursor: pointer;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.edit-button {
+    background-color: #ffffff;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-top-right-radius: 0; 
+  border-top-left-radius: 0; 
+  border-bottom-right-radius: 0; 
+  z-index: 99;
+}
+
+.edit-button:hover {
+    box-shadow: 0px 0px 40px rgba(255, 255, 255, 0.9);
+}
+
+.delete-button {
+    background-color: #a70000;
+    color:#e2e2e2;
+    position: absolute;
+    top: 0;
+    right: left;
+    border-top-right-radius: 0; 
+    border-top-left-radius: 0; 
+    border-bottom-left-radius: 0; 
+    z-index: 99;
+}
+
+.delete-button:hover {
+    box-shadow: 0px 0px 40px rgba(255, 0, 0, 0.9);
 }
 </style>

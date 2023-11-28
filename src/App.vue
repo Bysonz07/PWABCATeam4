@@ -1,7 +1,5 @@
 
 <script setup>
-import FormModal from './components/FormModal.vue';
-import HelloWorld from './components/HelloWorld.vue';
 import ProjectAkhir from './components/ProjectAkhir.vue';
 </script>
 
