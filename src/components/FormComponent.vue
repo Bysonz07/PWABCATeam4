@@ -35,9 +35,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue-darken-1" variant="text" @click="closeFormDialog">
-                    Close
-                </v-btn>
+                <v-btn color="blue-darken-1" variant="text" @click="closeFormDialog">Close</v-btn>
                 <v-btn type="submit" color="success" @click="submitForm">Submit</v-btn>
             </v-card-actions>
         </v-card>
@@ -88,11 +86,12 @@
 
     const submitForm = () => {
         if(selectedRecipeData.value != null){
+            // TODO logic UPDATE
             console.log("update " + selectedRecipeData.value.recipe_name)
         } else {
+            // TODO logic ADD
             console.log("add")
         }
-        console.log(form);
     };
 
 </script>
