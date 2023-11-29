@@ -7,20 +7,18 @@ export default defineConfig({
     vue(),
     VitePWA({
       injectRegister:'auto',
-      // strategies:'generateSW',
       strategies:'injectManifest',
-      srcDir:'src',
+      srcDir:'src/config',
       filename:'sw.js',
-      // registerType: 'autoUpdate',
       registerType:'prompt',
       devOptions: {
         enabled: true
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'My Awesome App - Yulius',
-        short_name: 'MyApp',
-        description: 'My Awesome App description - Yulius',
+        name: 'Todo Recipe',
+        short_name: 'THOR',
+        description: 'Todo recipe',
         theme_color: '#ffffff',
 				icons: [
           {
@@ -51,20 +49,12 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/6557178bbd4bcef8b61208ce.mockapi.io\/article\/article$/,
-            /*
-            Cache Strategies -> https://wildanjisung.notion.site/Cache-Strategies-9b0ff6d787f5430188147a26c7740443
-             - Cache First
-             - Cache Only
-             - Network First
-             - Network Only
-             - StaleWhileRevalidate
-            */
-            handler: 'CacheFirst',
+            handler: 'Network First',
             options: {
               cacheName: 'auth-user-cache',
               expiration: {
-                maxEntries:100,
-                maxAgeSeconds:10
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0,200]
