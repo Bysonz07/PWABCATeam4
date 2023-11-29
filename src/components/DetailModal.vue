@@ -26,19 +26,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeDialog"
-                >
+                <v-btn color="blue-darken-1" variant="text" @click="closeDialog">
                     Close
-                </v-btn>
-                <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeDialog"
-                >
-                    Save
                 </v-btn>
             </v-card-actions>
         </v-card>
