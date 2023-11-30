@@ -205,7 +205,10 @@ const onSetForm = (dataImage) => {
 };
 
 onMounted(() => {
-  form.value = props.selectedRecipe
+  if(props.selectedRecipe != null){
+    form.value = props.selectedRecipe
+  } 
+  
 })
 
 watch(props, function(oldVal, newVal) {

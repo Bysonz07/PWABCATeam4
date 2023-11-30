@@ -15,7 +15,7 @@
                                 >
                                     <v-expansion-panel-title> {{ listRecipe.step_name }}
                                     <template v-slot:actions="{ expanded }">
-                                        <v-icon :icon="expanded ? 'mdi-pencil' : ''"></v-icon>
+                                        <v-icon :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-icon>
                                     </template></v-expansion-panel-title>
                                     <v-expansion-panel-text>{{ listRecipe.step_desc }}</v-expansion-panel-text>
                                 </v-expansion-panel>

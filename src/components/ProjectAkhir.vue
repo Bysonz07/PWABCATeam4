@@ -304,14 +304,19 @@
     justify-content: center;
     align-items: center;
     align-self: stretch;
+    min-height: 60vh;
+    min-width: 15vw;
     width: 100%;
     cursor: pointer;
 }
 
 .cards {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 60vh;
+    min-width: 15vw;
+    width: 100%;
 }
 
 .edit-button {
