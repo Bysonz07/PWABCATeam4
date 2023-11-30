@@ -25,7 +25,7 @@
               <v-menu>
                   <template v-slot:activator="{ props }">
                       <v-text-field 
-                        v-model="fileImage" 
+                        v-model="form.recipe_image" 
                         placeholder="Foto Masakan" 
                         readonly
                         v-bind="props" 
@@ -81,6 +81,7 @@
                     variant="text" 
                     size="small" 
                     prepend-icon="mdi-plus"
+                    append-icon="mdi-plus"
                   >
                     <small>Tambah Step</small>
                   </v-btn>
@@ -120,8 +121,9 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from 'vue';
+import { ref, defineEmits, defineProps, watch, onMounted } from 'vue';
 import ModalCamera from './ModalCamera.vue';
+const props = defineProps(['selectedRecipe'])
 const emit = defineEmits(['submitForm'])
 const fileImage = ref();
 const openCamera = ref(false);
@@ -139,6 +141,8 @@ const form = ref({
     }
   ]
 });
+
+// const form = ref(`${props.form}`)
 
 const addStep = () => {
   form.value.steps.push(
@@ -199,6 +203,15 @@ const onSetForm = (dataImage) => {
     recipe_image: dataImage.value
   }
 };
+
+onMounted(() => {
+  form.value = props.selectedRecipe
+})
+
+watch(props, function(oldVal, newVal) {
+  console.log("HELLO WORLD")
+  console.log({ oldVal, newVal })
+})
 
 
 </script>
