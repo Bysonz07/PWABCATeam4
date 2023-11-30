@@ -20,7 +20,7 @@
             <v-container>
                 <v-row>
                     <v-col cols="12" >
-                        <RecipeForm />
+                        <RecipeForm :selectedRecipe="selectedRecipeData"/>
                     </v-col>
                 </v-row>
             </v-container>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-    import { ref, defineProps, onMounted, defineEmits, watchEffect } from 'vue';
+    import { ref, defineProps, onMounted, defineEmits, watchEffect, watch, toRaw } from 'vue';
     import { useDevicesList, useUserMedia, useWebNotification } from '@vueuse/core';
     import RecipeForm from './RecipeForm.vue'
     const broadcast = new BroadcastChannel('todo-recipe-channel');
@@ -373,5 +373,6 @@ const fetchData = async () => {
     })
 }
 
+console.log("EGHYROPS",props.data)
 
 </script>
