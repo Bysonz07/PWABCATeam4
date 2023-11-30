@@ -1,20 +1,14 @@
-import {precacheAndRoute} from 'workbox-precaching';
+import { precacheAndRoute } from 'workbox-precaching';
 import { cacheNames, clientsClaim } from 'workbox-core';
 import { registerRoute, setCatchHandler, setDefaultHandler } from 'workbox-routing';
-// import { StrategyHandler } from 'workbox-strategies';
 import { NetworkFirst, NetworkOnly, Strategy } from 'workbox-strategies';
-// import { cache, skipWaiting } from 'workbox-sw';
-
-import {CacheFirst} from 'workbox-strategies';
-import {ExpirationPlugin} from 'workbox-expiration';
-import {CacheableResponsePlugin} from 'workbox-cacheable-response';
-import { Queue } from 'workbox-background-sync';
-import { BackgroundSyncPlugin } from 'workbox-background-sync';
-
-// precacheAndRoute(self.__WB_MANIFEST);
+import { CacheFirst } from 'workbox-strategies';
+import { ExpirationPlugin } from 'workbox-expiration';
+import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { Queue, BackgroundSyncPlugin } from 'workbox-background-sync';
 
 self.skipWaiting();
-
+const cacheName = cacheNames.runtime;
 const data = {
   race: false,
   debug: false,
@@ -22,8 +16,23 @@ const data = {
   networkTimeoutSeconds: 0,
   fallback: 'index.html'
 };
+const queue = new Queue('todorecipe')
+const broadcast = new BroadcastChannel('todo-recipe-channel');
+const bgSyncPlugin = new BackgroundSyncPlugin('ThorQueue', {
+  maxRetentionTime: 24 * 60,
+});
+const manifest = self.__WB_MANIFEST;
+const cacheEntries = [];
+const manifestURLs = manifest.map(
+  (entry) => {
+    const url = new URL(entry.url, self.location);
+    cacheEntries.push(new Request(url.href, {
+      credentials: data.credentials
+    }));
+    return url.href;
+  }
+);
 
-const cacheName = cacheNames.runtime;
 
 const buildStrategy = () => {
   if (data.race) {
@@ -58,22 +67,7 @@ const buildStrategy = () => {
   }
 };
 
-const manifest = self.__WB_MANIFEST;
-
-const cacheEntries = [];
-
-const manifestURLs = manifest.map(
-  (entry) => {
-    const url = new URL(entry.url, self.location);
-    cacheEntries.push(new Request(url.href, {
-      credentials: data.credentials
-    }));
-    return url.href;
-  }
-);
-
 self.addEventListener('install', (event) => {
-  console.log("install")
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
       return cache.addAll(cacheEntries);
@@ -85,7 +79,6 @@ self.addEventListener('activate', (event) => {
   console.log("activate")
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
-      // Clean up those that are not listed in manifestURLs
       cache.keys().then((keys) => {
         keys.forEach((request) => {
           if (data.debug)
@@ -125,9 +118,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(bgSyncLogic());
 });
 
-// Create Broadcast Channel to send messages to the page
-const broadcast = new BroadcastChannel('sw-update-channel');
-
 self.addEventListener("push", async (event) => {
   console.log('event:', event.data.text());
   console.log("push")
@@ -140,7 +130,6 @@ self.addEventListener("push", async (event) => {
     }
    });
 });
-
 
 self.addEventListener("sync", async (event) => {
   console.log("sync triggered")
@@ -164,12 +153,6 @@ self.addEventListener("sync", async (event) => {
   // await queue.replayRequests();
 });
 
-const queue = new Queue('myQueueName1')
-
-const bgSyncPlugin = new BackgroundSyncPlugin('myQueueYulius', {
-  maxRetentionTime: 24 * 60,
-});
-
 const statusPlugin = {
   fetchDidSucceed: ({response}) => {
     if(response.status >= 500){
@@ -191,31 +174,18 @@ registerRoute(
   buildStrategy()
 );
 
-// Define your runtime caching strategy here
 registerRoute(
-    /^https:\/\/6557178bbd4bcef8b61208ce.mockapi.io\/article\/article$/,
-    // new CacheFirst({
-    //   cacheName: 'auth-user-cache',
-    //   plugins: [
-    //     new ExpirationPlugin({
-    //       maxEntries: 10,
-    //       maxAgeSeconds: 3, // 3 seconds for development, adjust for production
-    //     }),
-    //     new CacheableResponsePlugin({
-    //       statuses: [0, 200],
-    //     }),
-    //   ],
-    // })
-    new NetworkOnly({
-      plugins: [
-        bgSyncPlugin,
-        statusPlugin
-      ],
-    }),
-    'GET'
-  );
+  /^https:\/\/6557178bbd4bcef8b61208ce.mockapi.io\/article\/article$/,
+  new NetworkOnly({
+    plugins: [
+      bgSyncPlugin,
+      statusPlugin
+    ],
+  }),
+  'GET'
+);
 
-  setDefaultHandler(new NetworkOnly());
+setDefaultHandler(new NetworkOnly());
 
 // Fallback to app-shell for document request
 setCatchHandler(({ event }) => {
