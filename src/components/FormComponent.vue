@@ -1,99 +1,53 @@
 <template>
     <v-dialog v-model="dialogOpen" width="960" @click:outside="closeFormDialog">
-        <v-card>
-            <v-card-title>
-                <span class="text-h5" v-if="selectedRecipeData != null">Edit {{ selectedRecipeData.recipe_name }}</span>
-                <span class="text-h5" v-else="selectedRecipeData != null">Add Resep Baru</span>
+        <v-card class="pa-3 pt-6">
+            <div style="position: absolute; right: 10px; top: 10px">
+                <v-btn 
+                    icon="mdi-close"
+                    variant="tonal"
+                    size="small"
+                    @click="closeFormDialog"
+                />
+            </div>
+            <v-card-title class="text-center">
+                <span class="text-h5" v-if="selectedRecipeData != null">
+                    EDIT {{ selectedRecipeData.recipe_name?.toUpperCase() }}
+                </span>
+                <span class="text-h5" v-else>
+                    ADD RESEP BARU
+                </span>
             </v-card-title>
-            <v-card-text>
-                <v-container>
-                    <v-row>
-                        <v-col cols="12" >
-                            <v-form @submit.prevent="submitForm">
-                                <v-row>
-                                    <v-col cols="12" class="py-0">
-                                        <v-text-field v-model="form.recipe_name" label="Nama"></v-text-field>
-                                        <v-textarea v-model="form.recipe_desc" label="Description Resep"></v-textarea>
-                                        <input type="file" id="fileInput" hidden @change="onCreateUploadFile" />
-                                        <v-menu>
-                                            <template v-slot:activator="{ props }">
-                                                <v-text-field 
-                                                    v-model="fileImage" 
-                                                    placeholder="Foto Masakan" 
-                                                    readonly
-                                                    v-bind="props" 
-                                                    clearable
-                                                    @click:clear="onRemoveFile"
-                                                />
-                                            </template>
-                                            <v-list>
-                                                <v-list-item value="file" @click="onChooseFile">
-                                                    <v-list-item-title>Choose File</v-list-item-title>
-                                                </v-list-item>
-                                                <v-list-item value="camera" @click="openCamera.value = true; enabled.value = true">
-                                                    <v-list-item-title>Take Picture</v-list-item-title>
-                                                </v-list-item>
-                                            </v-list>
-                                        </v-menu>
-                                        <v-row v-for="(step, index) in form.steps" :key="index" >
-                                            <v-col md="4" class="py-0">
-                                                <v-text-field v-model="step.step_name" :label="'Nama Step ' + (index + 1)" ></v-text-field>
-                                            </v-col>
-                                            <v-col md="4" class="py-0" >
-                                                <v-text-field v-model="step.step_desc" :label="'Deskripsi Step ' + (index + 1)"></v-text-field>
-                                            </v-col>
-                                            <v-col md="4" class="py-0" >
-                                                <v-text-field v-model="step.step_photo" :label="'Photo Step ' + (index + 1)" append-icon="mdi-delete" @click:append="removeStep(index)"></v-text-field>
-                                            </v-col>
-                                        </v-row>
-                                        <v-btn block @click="addStep" color="primary" class="mt-2 py-5">Tambah Step</v-btn>
-                                    </v-col>
-                                </v-row>
-                            </v-form>
-                        </v-col>
-                    </v-row>
-                </v-container>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue-darken-1" variant="text" @click="closeFormDialog">
-                    Close
-                </v-btn>
-                <v-btn type="submit" color="success" @click="submitForm">Submit</v-btn>
-            </v-card-actions>
+            <v-container>
+                <v-row>
+                    <v-col cols="12" >
+                        <RecipeForm />
+                    </v-col>
+                </v-row>
+            </v-container>
         </v-card>
     </v-dialog>
     <div>
-    <div>
-      <p>
-        Supported: {{isSupported}}
-      </p>
-    </div>
-
-    <div v-if="isSupported">
-      <button @click="show()">
-        Show Notification
-      </button>
-    </div>
-    <div v-else>
-      The Notification Web API is not supported in your browser.
-    </div>
-  </div>
-  <div>
-    <v-dialog width="52vw" v-model="openCamera">
-      <v-card class="pa-3">
-        <div style="display: flex; justify-content: center; align-items: center">
-          <video ref="video" muted autoplay controls style="width: 50vw; height: auto" />
+        <div>
+        <p>
+            Supported: {{isSupported}}
+        </p>
         </div>
-        <v-btn id="startbutton" @click="takePicture">Take Photo</v-btn>
-      </v-card>
-    </v-dialog>
-  </div>
+
+        <div v-if="isSupported">
+        <button @click="show()">
+            Show Notification
+        </button>
+        </div>
+        <div v-else>
+            The Notification Web API is not supported in your browser.
+        </div>
+    </div>
 </template>
 
 <script setup>
     import { ref, defineProps, onMounted, defineEmits, watchEffect } from 'vue';
     import { useDevicesList, useUserMedia, useWebNotification } from '@vueuse/core';
+    import RecipeForm from './RecipeForm.vue'
     const broadcast = new BroadcastChannel('todo-recipe-channel');
     const options = {
         title: 'Hello, world from VueUse!',
@@ -198,8 +152,10 @@
 
     const submitForm = () => {
         if(selectedRecipeData.value != null){
+            // TODO logic UPDATE
             console.log("update " + selectedRecipeData.value.recipe_name)
         } else {
+            // TODO logic ADD
             console.log("add")
         }
         addData(form.value)
