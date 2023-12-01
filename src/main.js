@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import {registerSW} from 'virtual:pwa-register'
+import router from './router'
 // import './config'
 
 // vuetify
@@ -29,5 +30,6 @@ const vuetify = createVuetify({
   })
 
 registerSW({immediate : true})
-
-createApp(App).use(vuetify).mount('#app')
+const app = createApp(App)
+app.use(vuetify)
+app.use(router).mount('#app')
