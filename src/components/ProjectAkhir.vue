@@ -14,7 +14,7 @@
                 <v-btn class="delete-button" icon @click="openDeleteDialog(item)">
                     <v-icon>mdi-trash-can</v-icon>
                 </v-btn>
-                <v-img cover max-height="250" height="250" :src="item.recipe_image"></v-img>
+                <v-img cover max-height="250" height="250" :src="item.recipe_image" ></v-img>
                 <v-card-item>
                     <v-card-title>{{ item.recipe_name }}</v-card-title>
                     <v-card-subtitle>
@@ -275,6 +275,11 @@
             const resData = await axios.get("https://6560435083aba11d99d07de5.mockapi.io/recipes")
             console.log(resData)
             if(resData?.status == 200){
+                resData.data.forEach(el => {
+                    if(!(el?.recipe_image?.includes(".jpg"))){
+                        el.recipe_image = "data:image/png;base64," + el.recipe_image
+                    }
+                })
                 datas.value = resData.data
             }
         } catch (error){
@@ -377,5 +382,9 @@
 
 .delete-button:hover {
     box-shadow: 0px 0px 40px rgba(255, 0, 0, 0.9);
+}
+.fill-container {
+  width: 100%;
+  height: 100%;
 }
 </style>

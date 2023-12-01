@@ -58,13 +58,18 @@ const closeCamera = () => {
 
 const takePicture = () => {
   const canvas = document.createElement('canvas');
-  canvas.width = video.value.videoWidth;
-  canvas.height = video.value.videoHeight;
+  canvas.width = 145;
+  canvas.height = 86;
 
   const context = canvas.getContext('2d');
-  context.drawImage(video.value, 0, 0, canvas.width, canvas.height);
 
-  capturedImage.value = canvas.toDataURL('image/png');
+  context.drawImage(video.value, 0, 0,canvas.width,canvas.height);
+  
+
+  let b64Data= canvas.toDataURL('image/png');
+  capturedImage.value = b64Data.substring(22)
+  console.log('capturedImage.value', capturedImage.value)
+
   emit('setImage', capturedImage);
   closeCamera()
 }
