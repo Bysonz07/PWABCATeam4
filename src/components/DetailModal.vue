@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogOpen" width="1024" @click:outside="closeDialog">
+    <v-dialog v-model="dialogOpen" width="720" @click:outside="closeDialog">
         <v-card>
             <v-card-title>
                 <span class="text-h5">{{ selectedRecipeData.recipe_name }}</span>
@@ -15,7 +15,7 @@
                                 >
                                     <v-expansion-panel-title> {{ listRecipe.step_name }}
                                     <template v-slot:actions="{ expanded }">
-                                        <v-icon :icon="expanded ? 'mdi-pencil' : ''"></v-icon>
+                                        <v-icon :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-icon>
                                     </template></v-expansion-panel-title>
                                     <v-expansion-panel-text>{{ listRecipe.step_desc }}</v-expansion-panel-text>
                                 </v-expansion-panel>
@@ -26,19 +26,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeDialog"
-                >
+                <v-btn color="blue-darken-1" variant="text" @click="closeDialog">
                     Close
-                </v-btn>
-                <v-btn
-                    color="blue-darken-1"
-                    variant="text"
-                    @click="closeDialog"
-                >
-                    Save
                 </v-btn>
             </v-card-actions>
         </v-card>
