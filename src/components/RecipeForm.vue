@@ -210,15 +210,17 @@ const submitForm = async () => {
         //     console.log("RES",res.data)
         //   }
         // )
-        const response = await fetch(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${form.value.id}`,{
+        const response = await fetch(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${form.value.id}`, {
           method: 'PUT',
-          header: {'Content-Type':'application/json'},
-          body: JSON.stringify(form.value)
-        })
-        if(response.ok){
-          console.log("RESPONSE OKE")
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(form.value),
+        });
+        if (response.ok) {
+          console.log('Data sent successfully');
         } else {
-          console.error("Error")
+          console.error('Failed to send data');
         }
     } else {
         // TODO logic ADD
@@ -230,15 +232,17 @@ const submitForm = async () => {
         // ).catch(error => {
         //   console.log('error', error)
         // })
-        const response = await fetch('https://6560435083aba11d99d07de5.mockapi.io/recipes',{
+        const response = await fetch('https://6560435083aba11d99d07de5.mockapi.io/recipes', {
           method: 'POST',
-          header: {'Content-Type':'application/json'},
-          body: JSON.stringify(form.value)
-        })
-        if(response.ok){
-          console.log("RESPONSE OKE")
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(form.value),
+        });
+        if (response.ok) {
+          console.log('Data sent successfully');
         } else {
-          console.error("Error")
+          console.error('Failed to send data');
         }
     }
     emit('submitForm',form)
