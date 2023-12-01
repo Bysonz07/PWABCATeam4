@@ -3,9 +3,6 @@ import './style.css'
 import App from './App.vue'
 import {registerSW} from 'virtual:pwa-register'
 import router from './router'
-// import './config'
-
-// vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'

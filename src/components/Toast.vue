@@ -18,16 +18,10 @@
 
 <template>
   <div class="text-center ma-2" v-if="needRefresh">
-    <v-snackbar
-      v-model="snackbar"
-    >
+    <v-snackbar v-model="snackbar" >
       New content available, click on reload button to update.
       <template v-slot:actions>
-        <v-btn
-          color="pink"
-          variant="text"
-          @click="updateServiceWorker()"
-        >
+        <v-btn color="pink" variant="text" @click="updateServiceWorker()">
           Reload
         </v-btn>
       </template>

@@ -20,7 +20,7 @@
             <v-container>
                 <v-row>
                     <v-col cols="12" >
-                        <RecipeForm :key="refKey" :selectedRecipe="selectedRecipeData"/>
+                        <RecipeForm  :selectedRecipe="selectedRecipeData" @closeRecipeDialog="closeFormDialog"/>
                     </v-col>
                 </v-row>
             </v-container>
@@ -48,43 +48,19 @@
     import { ref, defineProps, onMounted, defineEmits, watchEffect, watch, toRaw } from 'vue';
     import { useDevicesList, useUserMedia, useWebNotification } from '@vueuse/core';
     import RecipeForm from './RecipeForm.vue';
-    import axios from 'axios';
     const broadcast = new BroadcastChannel('todo-recipe-channel');
-    const options = {
-        title: 'Hello, world from VueUse!',
-        dir: 'auto',
-        lang: 'en',
-        renotify: true,
-        tag: 'test',
-        onclick: function(){
-            console.log("masook")
-        },
-        onclose: () => console.log('onclose masok')
-        }
     const { isSupported, show } = useWebNotification()
     broadcast.onmessage = (event) => {
         if (event.data && event.data.type === 'CRITICAL_SW_UPDATE') {
-            // Show "update to refresh" banner to the user.
             const payload = event.data.payload;
-
-            // Log the payload to the console
-            console.log({payload});
             show()
         }
     };
     const props = defineProps(['data']);
-    const emit = defineEmits();
-    const dbName = "TODO Receipe";
-    const receipeList = ref([]);
+    const emit = defineEmits(['closeFormDialog']);
     const dialogOpen = ref(false);
     const selectedRecipeData = ref(null);
-    const fileImage = ref("")
     const currentCamera = ref('')
-    const isPhotoTaken = ref(false);
-    const isShotPhoto = ref(false);
-    const capturedImage = ref('');
-    const openCamera = ref(false);
-    const refKey = ref(0)
 
     const { videoInputs: cameras } = useDevicesList({
     requestPermissions: true,
@@ -117,14 +93,9 @@
 
         const broadcast = new BroadcastChannel('todo-recipe-channel');
         
-        // listen from service worker
         broadcast.onmessage = (event) => {
             if (event.data && event.data.type === 'CRITICAL_SW_UPDATE') {
-                // Show "update to refresh" banner to the user.
                 const payload = event.data.payload;
-            
-                // Log the payload to the console
-                console.log(payload);
                 show({
                     title: payload.details
                 })
@@ -144,241 +115,6 @@
         recipe_image: '',
         steps: [{ step_name: '', step_desc: '', step_photo: '' }]
     });
-
-    const addStep = () => {
-        form.value.steps.push({ step_name: '', step_desc: '', step_photo: '' });
-    };
-
-    const removeStep = (index) => {
-        form.value.steps.splice(index, 1);
-    };
-
-    const submitForm = () => {
-      console.log("SUBMIT FORM")
-        if(selectedRecipeData.value.id != null){
-            // TODO logic UPDATE
-            console.log("update " + selectedRecipeData.value)
-            const resData = axios.put(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${selectedRecipeData.value.id}`,JSON.stringify(selectedRecipeData.value))
-        } else {
-            // TODO logic ADD
-            console.log("add")
-            const resData = axios.post('https://6560435083aba11d99d07de5.mockapi.io/recipes', JSON.stringify(selectedRecipeData.value))
-        }
-        addData(form.value)
-    };
-
-    const onChooseFile = () => {
-        const element = document.getElementById("fileInput")
-        element.click()
-    }
-
-    const readFileAsBlob = (file) => {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-            resolve(new Blob([reader.result], { type: file.type }));
-            };
-            reader.readAsArrayBuffer(file);
-        });
-    }
-
-    const onCreateUploadFile = async (event) => {
-        const file = event.target.files[0];
-        const blobImage = await readFileAsBlob(file);
-       console.log('blobImage', blobImage)
-        fileImage.value = file.name;
-        const formData = new FormData();
-        formData.append('file', file);
-
-        form.value.recipe_image = blobImage;
-    }
-
-    const onRemoveFile = () => {
-        fileImage.value = "";
-        form.value.recipe_image = ''
-    }
-
-    //indexdb
-
-    const addData = (receipeData) => {
-        
-        const request = indexedDB.open(dbName, 2);
-        const uuid = crypto.randomUUID();
-        receipeData["id"] = uuid;
-        
-        request.onerror = (event) => {
-            console.error("Error opening database:", event.target.error);
-        };
-
-        const payload = {
-            uuid,
-            name: receipeData.recipe_name,
-            desc: receipeData.recipe_desc,
-            img: receipeData.recipe_image
-        }
-        
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-
-            const objectStore = db.createObjectStore("receipes", { keyPath: "uuid" });
-            objectStore.createIndex("name", "name", { unique: true });
-            objectStore.createIndex("desc", "desc", { unique: false });
-        };
-
-        request.onsuccess = (event) => {
-            const db = event.target.result;
-
-            const addTransaction = db.transaction("receipes", "readwrite");
-            const customerObjectStore = addTransaction.objectStore("receipes");
-
-            const addRequest = customerObjectStore.add(payload);
-
-            addRequest.onsuccess = (event) => {
-            console.log("Data added successfully");
-            
-            };
-
-            addRequest.onerror = (event) => {
-            console.error("Error adding data", event.target.error);
-           
-            };
-
-            addTransaction.oncomplete = () => {
-            // readData()
-            show({ title: "success add recipe"})
-            db.close();
-            };
-        };
-    };
-
-const readData = () => {
-  const request = indexedDB.open(dbName, 2);
-
-  request.onerror = (event) => {
-    console.error("Error opening database:", event.target.error);
-  };
-
-  request.onsuccess = (event) => {
-    const db = event.target.result;
-
-    const readTransaction = db.transaction("customers", "readonly");
-    const customerObjectStore = readTransaction.objectStore("customers");
-
-    const customersCursor = customerObjectStore.openCursor();
-
-    customersCursor.onsuccess = (event) => {
-      const cursor = event.target.result;
-      if (cursor) {
-        // customers.value.push(cursor.value);
-        let key = cursor.primaryKey;
-        let value = cursor.value;
-        let imageURL = URL.createObjectURL(value.image);
-        let existdata = false;
-        userList.value.forEach((el) => {
-          if (el.uuid === key) existdata = true;
-        })
-
-        if (!existdata) {
-          userList.value.push(value);
-        }
-        cursor.continue();
-      } else {
-        console.log("Data read successfully");
-        // customers.value.splice(0, customers.value.length);
-        db.close();
-      }
-    };
-
-    customersCursor.onerror = (event) => {
-      console.error("Error reading data", event.target.error);
-      db.close();
-    };
-  };
-};
-
-const updateData = (uuid) => {
-  const request = indexedDB.open(dbName, 2);
-
-  request.onerror = (event) => {
-    console.error("Error opening database:", event.target.error);
-  };
-
-  request.onsuccess = (event) => {
-    const db = event.target.result;
-
-    const updateTransaction = db.transaction("customers", "readwrite");
-    const customerObjectStore = updateTransaction.objectStore("customers");
-    const updateData = userList.value.filter((el) => el.uuid === uuid);
-    console.log({ updateData })
-
-    if (updateData.length > 0) {
-      updateData.at(0).name = `${updateData.at(0).name} update`
-      const updateRequest = customerObjectStore.put(updateData.at(0));
-    }
-
-    updateRequest.onsuccess = (event) => {
-      console.log("Data updated successfully");
-      updatedData.value = "Yes";
-    };
-
-    updateRequest.onerror = (event) => {
-      console.error("Error updating data", event.target.error);
-      updatedData.value = "No";
-    };
-
-    updateTransaction.oncomplete = () => {
-      console.log("Update transaction completed");
-      db.close();
-    };
-  };
-};
-
-const deleteData = (uuid) => {
-  const request = indexedDB.open(dbName, 2);
-
-  request.onerror = (event) => {
-    console.error("Error opening database:", event.target.error);
-  };
-
-  request.onsuccess = (event) => {
-    const db = event.target.result;
-
-    const deleteTransaction = db.transaction("customers", "readwrite");
-    const deleteObjectStore = deleteTransaction.objectStore("customers");
-
-    const deleteRequest = deleteObjectStore.delete(uuid);
-
-    deleteRequest.onsuccess = (event) => {
-      readData()
-      deletedData.value = "Yes";
-    };
-
-    deleteRequest.onerror = (event) => {
-      console.error("Error deleting data", event.target.error);
-      deletedData.value = "No";
-    };
-
-    deleteTransaction.oncomplete = () => {
-      userList.value = userList.value.filter((el) => el.uuid != uuid)
-      db.close();
-    };
-  };
-};
-
-const fetchData = async () => {
-  fetch("https://dummyjson.com/products/category/smartphones", { method: "GET"})
-    .then((resp) => {
-      return resp.json();
-    })
-    .then((res) => {
-      console.log({ res })
-      if (Array.isArray(res?.products) && res.products.length > 0) data.value = res.products;
-    })
-    .catch((err ) => {
-      console.log({ err })
-    })
-}
-
-console.log("EGHYROPS",props.data)
+  
 
 </script>
