@@ -1,10 +1,6 @@
-import { precacheAndRoute } from 'workbox-precaching';
 import { cacheNames, clientsClaim } from 'workbox-core';
 import { registerRoute, setCatchHandler, setDefaultHandler } from 'workbox-routing';
 import { NetworkFirst, NetworkOnly, Strategy } from 'workbox-strategies';
-import { CacheFirst } from 'workbox-strategies';
-import { ExpirationPlugin } from 'workbox-expiration';
-import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { Queue, BackgroundSyncPlugin } from 'workbox-background-sync';
 
 self.skipWaiting();
@@ -16,7 +12,7 @@ const data = {
   networkTimeoutSeconds: 0,
   fallback: 'index.html'
 };
-const queue = new Queue('todorecipe')
+const queue = new Queue('recipes')
 const broadcast = new BroadcastChannel('todo-recipe-channel');
 const bgSyncPlugin = new BackgroundSyncPlugin('ThorQueue', {
   maxRetentionTime: 24 * 60,
@@ -48,7 +44,6 @@ const buildStrategy = () => {
           });
           cacheMatchDone.then(response => response && resolve(response));
 
-          // Reject if both network and cache error or find no response.
           Promise.allSettled([fetchAndCachePutDone, cacheMatchDone]).then((results) => {
             const [fetchAndCachePutResult, cacheMatchResult] = results;
             if (fetchAndCachePutResult.status === 'rejected' && !cacheMatchResult.value)
@@ -76,7 +71,6 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  console.log("activate")
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
       cache.keys().then((keys) => {
@@ -100,7 +94,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    console.log("fetch")
     if(event.request.method !== 'POST'){
       return;
     }
@@ -120,7 +113,6 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener("push", async (event) => {
   console.log('event:', event.data.text());
-  console.log("push")
 
   broadcast.postMessage({
     type: 'CRITICAL_SW_UPDATE',
@@ -140,17 +132,6 @@ self.addEventListener("sync", async (event) => {
       details: 'This is a critical update. Please update your app.'
     }
    });
-  // broadcast.postMessage({ type: 'MSG_ID', });
-  // Check if the sync event is for the sync tag we are interested in.
-  // if (event.tag !== "my-sync-tag") {
-  //   return;
-  // }
-
-  // // Get the queue of pending requests.
-  // const queue = new workbox.backgroundSync.Queue("my-sync-queue");
-
-  // // Replay all of the pending requests.
-  // await queue.replayRequests();
 });
 
 const statusPlugin = {
@@ -175,7 +156,7 @@ registerRoute(
 );
 
 registerRoute(
-  /^https:\/\/6557178bbd4bcef8b61208ce.mockapi.io\/article\/article$/,
+  /^https:\/\/6560435083aba11d99d07de5.mockapi.io\/recipes$/,
   new NetworkOnly({
     plugins: [
       bgSyncPlugin,
@@ -186,8 +167,6 @@ registerRoute(
 );
 
 setDefaultHandler(new NetworkOnly());
-
-// Fallback to app-shell for document request
 setCatchHandler(({ event }) => {
   switch (event.request.destination) {
     case 'document':

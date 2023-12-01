@@ -3,23 +3,10 @@
     <v-dialog width="52vw" v-model="props.show" @click:outside="closeCamera">
       <v-card class="pa-3">
           <div class="d-flex justify-center align-center mb-4">
-            <video 
-              ref="video" 
-              muted 
-              autoplay 
-              controls style="width: 50vw; 
-              height: auto" 
-            ></video>
+            <video ref="video" muted autoplay controls style="width: 50vw; height: auto"></video>
           </div>
           <div class="d-flex justify-center">
-            <v-btn 
-              id="startbutton" 
-              @click="takePicture"
-              icon="mdi-account"
-              variant="tonal"
-              :disabled="!video"
-            >
-            </v-btn>
+            <v-btn id="startbutton" @click="takePicture" icon="mdi-account" variant="tonal" :disabled="!video"></v-btn>
           </div>
       </v-card>
     </v-dialog>
@@ -27,7 +14,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, watchEffect, ref, watch, toRef } from 'vue';
+import { defineProps, defineEmits, watchEffect, ref, watch } from 'vue';
 import { useDevicesList, useUserMedia } from '@vueuse/core';
 
 const video = ref()
@@ -62,13 +49,10 @@ const takePicture = () => {
   canvas.height = 86;
 
   const context = canvas.getContext('2d');
-
   context.drawImage(video.value, 0, 0,canvas.width,canvas.height);
-  
 
   let b64Data= canvas.toDataURL('image/png');
   capturedImage.value = b64Data.substring(22)
-  console.log('capturedImage.value', capturedImage.value)
 
   emit('setImage', capturedImage);
   closeCamera()

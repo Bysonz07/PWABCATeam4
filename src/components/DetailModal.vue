@@ -9,10 +9,7 @@
                     <v-row>
                         <v-col cols="12" >
                             <v-expansion-panels multiple>
-                                <v-expansion-panel 
-                                    v-for="listRecipe in selectedRecipeData.steps" 
-                                    :key="listRecipe.id"
-                                >
+                                <v-expansion-panel v-for="listRecipe in selectedRecipeData.steps" :key="listRecipe.id">
                                     <v-expansion-panel-title> {{ listRecipe.step_name }}
                                     <template v-slot:actions="{ expanded }">
                                         <v-icon :icon="expanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"></v-icon>
