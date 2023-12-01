@@ -123,11 +123,13 @@
 <script setup>
 import { ref, defineEmits, defineProps, watch, onMounted } from 'vue';
 import ModalCamera from './ModalCamera.vue';
+import axios from 'axios';
 const props = defineProps(['selectedRecipe'])
-const emit = defineEmits(['submitForm'])
+const emit = defineEmits(['submitForm','refKey','closeFormDialog'])
 const fileImage = ref();
 const openCamera = ref(false);
 const camera = ref(null)
+const stepCount = ref(1)
 const form = ref({
   id:'',
   recipe_name: '',
@@ -147,11 +149,13 @@ const form = ref({
 const addStep = () => {
   form.value.steps.push(
     { 
+      step_id: `1_${stepCount}`,
       step_name: '', 
       step_desc: '', 
       step_photo: '' 
     }
   );
+  stepCount.value += 1
 };
 
 const removeStep = (index) => {
@@ -181,7 +185,7 @@ const readFileAsBlob = (file) => {
 const onCreateUploadFile = async (event) => {
   const file = event.target.files[0];
   const blobImage = await readFileAsBlob(file);
-  
+  console.log('blobImage', blobImage)
   fileImage.value = file.name;
   const formData = new FormData();
   formData.append('file', file);
@@ -191,7 +195,58 @@ const onCreateUploadFile = async (event) => {
 
 const submitData = () => {
   emit('submitForm', form);
+  emit('refKey',1)
 };
+
+const submitForm = async () => {
+  try {
+    
+    console.log('form.value.id.length', form.value.id.length)
+    if(form.value.id.length > 0){
+        // TODO logic UPDATE
+        
+        // const resData = axios.put(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${form.value.id}`,JSON.stringify(form.value),{headers:{"Content-Type":"application/json"}}).then(
+        //   res => {
+        //     console.log("RES",res.data)
+        //   }
+        // )
+        const response = await fetch(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${form.value.id}`,{
+          method: 'PUT',
+          header: {'Content-Type':'application/json'},
+          body: JSON.stringify(form.value)
+        })
+        if(response.ok){
+          console.log("RESPONSE OKE")
+        } else {
+          console.error("Error")
+        }
+    } else {
+        // TODO logic ADD
+       
+        // const resData = axios.post('https://6560435083aba11d99d07de5.mockapi.io/recipes', postData,{headers:{"Content-Type":"application/json"}}).then(
+        //   res => {
+        //       console.log('res', res)
+        //   }
+        // ).catch(error => {
+        //   console.log('error', error)
+        // })
+        const response = await fetch('https://6560435083aba11d99d07de5.mockapi.io/recipes',{
+          method: 'POST',
+          header: {'Content-Type':'application/json'},
+          body: JSON.stringify(form.value)
+        })
+        if(response.ok){
+          console.log("RESPONSE OKE")
+        } else {
+          console.error("Error")
+        }
+    }
+    emit('submitForm',form)
+    emit('closeFormDialog')
+  } catch (error) {
+    console.log('error', error)
+  }
+}
 
 const onSetModalCamera = (val) => {
   openCamera.value = val;
@@ -208,7 +263,7 @@ onMounted(() => {
   if(props.selectedRecipe != null){
     form.value = props.selectedRecipe
   } 
-  
+  console.log('form.value', form.value)
 })
 
 watch(props, function(oldVal, newVal) {

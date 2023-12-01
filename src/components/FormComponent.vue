@@ -20,7 +20,7 @@
             <v-container>
                 <v-row>
                     <v-col cols="12" >
-                        <RecipeForm :selectedRecipe="selectedRecipeData"/>
+                        <RecipeForm :key="refKey" :selectedRecipe="selectedRecipeData"/>
                     </v-col>
                 </v-row>
             </v-container>
@@ -47,7 +47,8 @@
 <script setup>
     import { ref, defineProps, onMounted, defineEmits, watchEffect, watch, toRaw } from 'vue';
     import { useDevicesList, useUserMedia, useWebNotification } from '@vueuse/core';
-    import RecipeForm from './RecipeForm.vue'
+    import RecipeForm from './RecipeForm.vue';
+    import axios from 'axios';
     const broadcast = new BroadcastChannel('todo-recipe-channel');
     const options = {
         title: 'Hello, world from VueUse!',
@@ -83,6 +84,7 @@
     const isShotPhoto = ref(false);
     const capturedImage = ref('');
     const openCamera = ref(false);
+    const refKey = ref(0)
 
     const { videoInputs: cameras } = useDevicesList({
     requestPermissions: true,
@@ -129,6 +131,7 @@
             }
         };
     });
+    
 
     const closeFormDialog = () => {
         emit('closeFormDialog');
@@ -151,12 +154,15 @@
     };
 
     const submitForm = () => {
-        if(selectedRecipeData.value != null){
+      console.log("SUBMIT FORM")
+        if(selectedRecipeData.value.id != null){
             // TODO logic UPDATE
-            console.log("update " + selectedRecipeData.value.recipe_name)
+            console.log("update " + selectedRecipeData.value)
+            const resData = axios.put(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${selectedRecipeData.value.id}`,JSON.stringify(selectedRecipeData.value))
         } else {
             // TODO logic ADD
             console.log("add")
+            const resData = axios.post('https://6560435083aba11d99d07de5.mockapi.io/recipes', JSON.stringify(selectedRecipeData.value))
         }
         addData(form.value)
     };
@@ -179,7 +185,7 @@
     const onCreateUploadFile = async (event) => {
         const file = event.target.files[0];
         const blobImage = await readFileAsBlob(file);
-       
+       console.log('blobImage', blobImage)
         fileImage.value = file.name;
         const formData = new FormData();
         formData.append('file', file);

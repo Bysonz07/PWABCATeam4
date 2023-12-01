@@ -1,14 +1,14 @@
 
 <script setup>
-import ProjectAkhir from './components/ProjectAkhir.vue';
-import Snackbar from './components/Toast.vue';
-import {RouterView, RouterLink} from 'vue-router'
+import ProjectAkhir from './ProjectAkhir.vue';
+import Snackbar from './Toast.vue';
+
 </script>
 
 <template>
-  
-  <RouterView />
-
+    
+  <ProjectAkhir />
+  <Snackbar />
 </template>
 
 <style scoped>
