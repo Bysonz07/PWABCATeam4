@@ -49,26 +49,19 @@
                 :key="index" 
                 class="mt-2"
               >
-                  <v-col md="4" class="py-0">
+                  <v-col xl="6" sm="6" md="6" class="py-0">
                     <v-text-field 
                       v-model="step.step_name" 
                       :label="'Nama Step ' + (index + 1)" 
                     />
                   </v-col>
-                  <v-col md="4" class="py-0" >
+                  <v-col xl="6" sm="6" md="6" class="py-0" >
                     <v-text-field 
                       v-model="step.step_desc" 
                       :label="'Deskripsi Step ' + (index + 1)"
                     />
                   </v-col>
-                  <v-col md="4" class="py-0" >
-                    <v-text-field 
-                      v-model="step.step_photo" 
-                      :label="'Photo Step ' + (index + 1)" 
-                      append-icon="mdi-delete" 
-                      @click:append="removeStep(index)"
-                    />
-                  </v-col>
+                  
               </v-row>
               <v-row>
                 <v-col cols="5" class="d-flex justify-center align-center p-0">
@@ -210,6 +203,7 @@ const submitForm = async () => {
         //     console.log("RES",res.data)
         //   }
         // )
+        console.log('form.value.recipe_image', form.value.recipe_image)
         const response = await fetch(`https://6560435083aba11d99d07de5.mockapi.io/recipes/${form.value.id}`, {
           method: 'PUT',
           headers: {
