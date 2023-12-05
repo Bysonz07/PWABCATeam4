@@ -1,4 +1,6 @@
 <template >
+    <h1>Resep Makanan</h1>
+    <h3 style="margin-top: 15px;">Apa yang mau anda masak hari ini ?</h3>
     <v-row>
         <v-col class="d-flex align-self-stretch" xl="3" md="3" sm="6" >
             <v-card @click="openFormDialog(null)" class="blur-card mx-auto my-12" > 
